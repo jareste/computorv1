@@ -33,8 +33,6 @@ class Tokenizer():
 					current_number = ''
 				if not self.tokens.isspace() and self.tokens not in ['+', '-']:
 					self.expansions.append(self.tokens)
-				else:
-					current_number = self.tokens.()
 		if current_number:
 			self.expansions.append(current_number)
 		
