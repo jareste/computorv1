@@ -22,6 +22,14 @@ if __name__ == '__main__':
 		equation = Parser.parse(sys.argv[1])
 	except Exception as e:
 		print(e)
+		print('Valid chars: ', ['0','1','2','3','4','5','6','7','8','9', 'x','X','=','^','+','-','*','/','.',' '])
+		exit(1)
+	print('\n-----------------------------------\n')
+	print('Third step: SOLVE')
 	eq = Eq(equation, 0)
+	print('Polinomial degree: ' + str(equation.as_poly().degree()))
 	sol = solve(eq, dict=True)
+	print('Solution: ')
+	for s in sol:
+		print(s)
 	print(sol)

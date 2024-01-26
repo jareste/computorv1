@@ -9,6 +9,7 @@ class ParserError(Exception):
 class Parser():
 	@staticmethod
 	def parse(av):
+		av.replace('x', 'X')
 		if not re.match("^[0123456789xX=^+\\-*/. ]*$", av): 		# check for invalid characters
 			raise ParserError("Found an invalid character in the equation.")
 		rmeq = av.split('=')
@@ -28,21 +29,22 @@ class Parser():
 			raise ParserError("Found an invalid equation.")
 		if rmeq[0][len(rmeq[0]) - 1] == '*' or rmeq[1][len(rmeq[1]) - 1] == '*' or rmeq[0][len(rmeq[0]) - 1] == '/' or rmeq[1][len(rmeq[1]) - 1] == '/': # check for x = 0
 			raise ParserError("Found an invalid equation.")
+		print('First step: PARSE')
+		print('Left side after parsing: ' + rmeq[0])
+		print('Right side after parsing: ' + rmeq[1])
+		print(rmeq[0] + ' = ' + rmeq[1])
 		rmeq[0] = rmeq[0].replace('^', '**')
 		rmeq[1] = rmeq[1].replace('^', '**')
 		x = symbols('x')
 		left_side = simplify(rmeq[0])
 		right_side = simplify(rmeq[1])
-		equation = simplify(left_side - right_side)
-		print(left_side)
-		print(right_side)
-		print(equation)	
-		test = str(equation).replace('**', '^')
-		print(test)
-		print(rmeq)
 		
-		print('fino')
-		print("valid")
+		equation = simplify(left_side - right_side)
+		print('\n-----------------------------------\n')
+		print('Second step: SIMPLIFY')
+		print('Left side after simplyfing: ' + str(left_side).replace('**', '^') )
+		print('Right side after simplyfing: ' + str(right_side).replace('**', '^'))
+		print(str(equation).replace('**', '^') + ' = 0')
 		return equation
 		# validChars = set(['0','1','2','3','4','5','6','7','8','9','x','X','=','^','+','-','*','/','.',' '])
 		# tokens = Tokenizer()
