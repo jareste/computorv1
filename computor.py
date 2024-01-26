@@ -19,6 +19,9 @@ if __name__ == '__main__':
 		print('\"Equation to be solved in double quotes\"')
 		exit(1)
 	try:
-		Parser.parse(sys.argv[1])
+		equation = Parser.parse(sys.argv[1])
 	except Exception as e:
 		print(e)
+	eq = Eq(equation, 0)
+	sol = solve(eq, dict=True)
+	print(sol)
