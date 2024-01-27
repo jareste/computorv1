@@ -1,4 +1,3 @@
-from .tokenizer import Tokenizer
 import re
 from sympy import symbols, Eq, solve, simplify
 
