@@ -3,33 +3,35 @@ from srcs.parser import Parser
 from sympy import symbols, Eq, solve
 
 if __name__ == '__main__':
-
-	# i'll start parsing the arguments and format them in the (args, 0) format converting each ^ to **.
-
-	# x = symbols('x')
-	# eq1 = Eq(x**2 -x - 6, 0)
-
-
-	# sol = solve(eq1)
-
-	# print(sol)
 	if len(sys.argv) != 2:
 		print('Please introduce only 1 argument with correct format.')
 		print('Format:')
-		print('\"Equation to be solved in double quotes\"')
+		print('\"Polinomial equation to be solved with grade up to three\"')
+		print('Example:')
+		print('\"x^2 -X = 6\"')
 		exit(1)
 	try:
 		equation = Parser.parse(sys.argv[1])
 	except Exception as e:
 		print(e)
-		print('Valid chars: ', ['0','1','2','3','4','5','6','7','8','9', 'x','X','=','^','+','-','*','/','.',' '])
 		exit(1)
 	print('\n-----------------------------------\n')
 	print('Third step: SOLVE')
-	eq = Eq(equation, 0)
-	print('Polinomial degree: ' + str(equation.as_poly().degree()))
-	sol = solve(eq, dict=True)
+	try:
+		degree = equation.as_poly().degree()
+	except Exception as e:
+		print('This equation has no solution as each side is equal to the other. Or it has infinite solutions. Try at least with grade 1.')
+		exit(1)
+	print('Polinomial degree: ' + str(degree))
+	if degree > 3:
+		print('The polynomial degree is stricly greater than 3, I can\'t solve.')
+		exit(1)
 	print('Solution: ')
+	eq = Eq(equation, 0)
+	sol = solve(eq, dict=True)
+	i = 0
 	for s in sol:
-		print(s)
-	print(sol)
+		s_str = str(s)
+		s_str = s_str.replace('{', '').replace('}', '')
+		print(f'Solution {i} = {s_str}')
+		i += 1
