@@ -43,11 +43,9 @@ class Parser():
 	@staticmethod
 	def __checkXposition(rmeq):
 		for element in range(0, len(rmeq[0])):
-			print('element', rmeq[0][element])
 			if rmeq[0][element] == 'X' and (re.match("[0-9]", rmeq[0][element -1] or re.match("[0-9]", rmeq[0][element + 1]))):
 				raise ParserError("Found an invalid equation.")
 		for element in range(0, len(rmeq[1])):
-			print('element', rmeq[1][element])
 			if rmeq[1][element] == 'X' and (re.match("[0-9]", rmeq[1][element -1] or re.match("[0-9]", rmeq[1][element + 1]))):
 				raise ParserError("Found an invalid equation.")
 
