@@ -48,10 +48,24 @@ class Parser():
 			if element > 0 and rmeq[1][element] == 'X' and (re.match("[0-9]", rmeq[1][element -1] or re.match("[0-9]", rmeq[1][element + 1]))):
 				raise ParserError("Found an invalid equation.")
 
+	@staticmethod
 	def __replacemultonX(rmeq):
 		rmeq[0] = rmeq[0].replace('*X', 'X')
 		rmeq[1] = rmeq[1].replace('*X', 'X')
 		return rmeq
+
+	@staticmethod
+	def __simplify(rmeq):
+		rmeq[0] = rmeq[0].replace(' ', '')
+		rmeq[1] = rmeq[1].replace(' ', '')
+		rmeq[0] = rmeq[0].replace('^', '**')
+		rmeq[1] = rmeq[1].replace('^', '**')
+		x = symbols('x')
+		left_side = simplify(rmeq[0])
+		right_side = simplify(rmeq[1])
+		equation = simplify(left_side - right_side)
+		return equation
+
 
 	@staticmethod
 	def parse(av):
@@ -70,11 +84,12 @@ class Parser():
 		
 		rmeq[0] = rmeq[0].replace('^', '**')
 		rmeq[1] = rmeq[1].replace('^', '**')
-		x = symbols('x')
-		left_side = simplify(rmeq[0])
-		right_side = simplify(rmeq[1])
-		equation = simplify(left_side - right_side)
-		rmeq = Parser.__replacemultonX(rmeq)
+		# x = symbols('x')
+		# print(rmeq[0] + ' = ' + rmeq[1])
+		# left_side = simplify(rmeq[0])
+		# right_side = simplify(rmeq[1])
+		# equation = simplify(left_side - right_side)
+		# rmeq = Parser.__replacemultonX(rmeq)
 		print('\n-----------------------------------\n')
 		print('Second step: SIMPLIFY')
 		print('Left side after simplyfing: ' + str(left_side).replace('**', '^') )
