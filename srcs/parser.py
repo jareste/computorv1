@@ -42,7 +42,6 @@ class Parser():
 	@staticmethod
 	def __checkXposition(rmeq):
 		for element in range(0, len(rmeq[0])):
-			print(rmeq[0][element])
 			if element > 0 and rmeq[0][element] == 'X' and (re.match("[0-9]", rmeq[0][element -1] or re.match("[0-9]", rmeq[0][element + 1]))):
 				raise ParserError("Found an invalid equation.")
 		for element in range(0, len(rmeq[1])):
@@ -61,13 +60,9 @@ class Parser():
 		av = av.replace('x', 'X')
 		
 		Parser.__checkValidChars(av)
-		print('no')
 		rmeq = Parser.__checkEqualSign(av)
-		print('no')
 		Parser.__checkOperators(rmeq)
-		print('no')
 		Parser.__checkXeq0(rmeq)
-		print('no')
 		Parser.__checkXposition(rmeq)
 		print('Left side after parsing: ' + rmeq[0])
 		print('Right side after parsing: ' + rmeq[1])
@@ -76,12 +71,10 @@ class Parser():
 		rmeq[0] = rmeq[0].replace('^', '**')
 		rmeq[1] = rmeq[1].replace('^', '**')
 		x = symbols('x')
-		print('aqui' + rmeq[0])
 		left_side = simplify(rmeq[0])
 		right_side = simplify(rmeq[1])
 		equation = simplify(left_side - right_side)
 		rmeq = Parser.__replacemultonX(rmeq)
-		print(rmeq)
 		print('\n-----------------------------------\n')
 		print('Second step: SIMPLIFY')
 		print('Left side after simplyfing: ' + str(left_side).replace('**', '^') )

@@ -1,10 +1,25 @@
 import re
 import math, cmath
 
+def _sqrt(number, isnegative, guess=0.0,):
+    if guess == 0.0:
+        guess = number / 2.0
+
+    better_guess = (guess + number / guess) / 2.0
+
+    if abs(guess - better_guess) < 0.000001:
+        if isnegative:
+            return complex(0, better_guess)
+        return better_guess
+
+    # Otherwise, use the better guess as the new guess and try again.
+    else:
+        return _sqrt(number, isnegative, better_guess)
+
+
+
 def solve_equation(equation):
     coefficients = [float(x) for x in re.findall(r'[-+]?\d*\.?\d+', equation)]
-    print('coefficients: ' + str(coefficients[0]) + 'x^2 ' + str(coefficients[1]) + 'x ' + str(coefficients[2]))
-    # Solve linear equation
     if len(coefficients) == 2:
         a, b = coefficients
         if a == 0:
@@ -28,8 +43,11 @@ def solve_equation(equation):
         if discriminant < 0:
             info = "Discriminant is strictly negative, the two complex solutions are:"
             print(info)
+            # root1 = (-b + _sqrt(-discriminant, True)) / (2*a)
             root1 = (-b + cmath.sqrt(discriminant)) / (2*a)
-            root2 = (-b - cmath.sqrt(discriminant)) / (2*a)
+            root2 = (-b - _sqrt(-discriminant, True)) / (2*a)
+            print('root1: ' + str(root1))
+            print('root2: ' + str(root2))
             root1 = str(root1).replace('j', 'i')
             root2 = str(root2).replace('j', 'i')
             return root1, root2
@@ -40,8 +58,8 @@ def solve_equation(equation):
         else:
             info = "Discriminant is strictly positive, the two real solutions are:"
             print(info)
-            root1 = (-b + math.sqrt(discriminant)) / (2*a)
-            root2 = (-b - math.sqrt(discriminant)) / (2*a)
+            root1 = (-b + _sqrt(discriminant, False)) / (2*a)
+            root2 = (-b - _sqrt(discriminant, False)) / (2*a)
             return root1, root2
 
     else:
