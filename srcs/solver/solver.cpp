@@ -1,5 +1,14 @@
 #include <computor.h>
 
+static double get_number(int i, std::vector<std::string> parser)
+{
+    double number;
+    std::cin >> number;
+    if (std::cin.fail())
+        throw std::invalid_argument("Invalid number");
+    return (number);
+}
+
 void solver(std::vector<std::string>  parser)
 {
     double constant = 0;
@@ -8,15 +17,18 @@ void solver(std::vector<std::string>  parser)
 
     bool equalFound = false;
     int j = 0;
+    double number= 0;
+    char sign;
     for (int i = 0; i < int(parser.size()); i++)
     {
+        number = 0;
         if (parser[i] == "=")
         {
             equalFound = true;
             continue ;
         }
-        j = 0;
-        while ()
+        if (isdigit(parser[i][0]))
+            number = get_number(i, parser);
         // if (parser[i] == "=")
         // {
         //     equalFound = true;
