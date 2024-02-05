@@ -28,6 +28,7 @@ class Parser():
 				continue
 			if term == '=':
 				equalFound = True
+				number = 0
 				sign = -1
 				i += 1
 				continue
@@ -63,15 +64,19 @@ class Parser():
 								raise ParserError("Invalid format after X")
 				if number == 0 and i != 1:
 					if re.match(r"^[+-]$", term):
-						if term == '-':
+						if term == '-' and equalFound == False:
 							sign = -1
-						elif term == '+':
+						elif term == '+' and equalFound == False:
 							sign = 1
+						elif term == '-' and equalFound == True:
+							sign = 1
+						elif term == '+' and equalFound == True:
+							sign = -1
 					else:
 						raise ParserError("Invalid format")
 				if term == '^':
 					raise ParserError("Missing an X before the ^")
 			i += 1
-		# print(a, b, c)
+		print(a, b, c)
 		return a, b, c
 

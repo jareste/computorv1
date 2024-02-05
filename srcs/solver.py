@@ -6,8 +6,6 @@ def _sqrt(number, isnegative, guess=0.0,):
         guess = number / 2.0
     better_guess = (guess + number / guess) / 2.0
     if abs(guess - better_guess) < 0.000001:
-        if isnegative:
-            return complex(0, better_guess)
         return better_guess
     else:
         return _sqrt(number, isnegative, better_guess)
@@ -16,8 +14,7 @@ def print_reduced_form(a, b, c):
     print("Reduced form: ", end="")
     if a != 0:
         print(a, end="")
-        if b != 0 or c != 0:
-            print(" * X^2 ", end="")
+        print(" * X^2 ", end="")
     if b != 0:
         if a != 0:
             if b > 0:
@@ -25,8 +22,7 @@ def print_reduced_form(a, b, c):
             else:
                 print("- ", end="")
         print(abs(b), end="")
-        if c != 0:
-            print(" * X ", end="")
+        print(" * X ", end="")
     if c != 0:
         if c > 0:
             print("+ ", end="")
@@ -54,12 +50,9 @@ def solve_equation(a, b, c):
             return solution
     else:  
         discriminant = b**2 - 4*a*c
-        if discriminant < 0:  
-            root1 = (-b + _sqrt(-discriminant, True)) / (2*a)
-            root2 = (-b - _sqrt(-discriminant, True)) / (2*a)
+        if discriminant < 0:
             print("Polinomial degree: 2")
-            print("Discriminant is strictly negative, the two complex solutions are:\n", str(root1).replace("(", "").replace(")", ""), "\n", str(root2).replace("(", "").replace(")", ""))
-            return root1, root2
+            print("Discriminant is strictly negative, there are no real solution.")
         elif discriminant == 0: 
             root = -b / (2*a)
             print("Polinomial degree: 2")
