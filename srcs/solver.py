@@ -46,6 +46,7 @@ def solve_equation(a, b, c):
         else:
             solution = -c / b
             print("Polinomial degree: 1")
+            print("Irreductible fraction: ", f"-{c} / {b}")
             print("The solution is:\n", solution)
             return solution
     else:  
@@ -56,10 +57,11 @@ def solve_equation(a, b, c):
         elif discriminant == 0: 
             root = -b / (2*a)
             print("Polinomial degree: 2")
+            print("Irreductible fraction: ", f"-{b} / {(2*a)}")
             print("Discriminant is zero, the solution is:", root)
             return root
         else: 
             root1 = (-b + _sqrt(discriminant, False)) / (2*a)
             root2 = (-b - _sqrt(discriminant, False)) / (2*a)
             print("Polinomial degree: 2")
-            print("Discriminant is strictly positive, the two solutions are:\n", root1, "\n", root2)
+            print("Discriminant is strictly positive, the two solutions are:\n", f"-{b} + √{discriminant} / {(2*a)} = {root1}", "\n", f"-{b} - √{discriminant} / {(2*a)} = {root2}")
