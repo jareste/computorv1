@@ -13,9 +13,14 @@ class Parser():
 		b = 0
 		c = 0
 		number = 0
+		haveNumber = False
 		sign = '+'
-		if not re.match(r"^[Xx0-9*-+=]", av):
-			raise ParserError("Invalid character in expression or invalid format")
+		for term in av:
+			if term == ' ':
+				continue
+			if not re.match(r"^[Xx0-9*-^+=]", term):
+				# print(term)
+				raise ParserError("Invalid character in expression or invalid format")
 
 		av_list = list(av) 
 
@@ -38,8 +43,9 @@ class Parser():
 					i += 1
 					number_str += av_list[i]
 				number = float(number_str)
+				haveNumber = True
 			else:
-				if number != 0:
+				if number != 0 or term == '*' or haveNumber == True:
 					if term == '*':
 						if i+4 < len(av_list) and (av_list[i+2] == 'X' or av_list[i+2] == 'x') and av_list[i+3] == '^' and av_list[i+4].isdigit():
 							i += 1
@@ -62,7 +68,7 @@ class Parser():
 								continue
 							else:
 								raise ParserError("Invalid format after X")
-				if number == 0 and i != 1:
+				if number == 0 and i != 1 and haveNumber == False:
 					if re.match(r"^[+-]$", term):
 						if term == '-' and equalFound == False:
 							sign = -1
@@ -74,9 +80,11 @@ class Parser():
 							sign = -1
 					else:
 						raise ParserError("Invalid format")
+				else:
+					haveNumber = False
 				if term == '^':
 					raise ParserError("Missing an X before the ^")
 			i += 1
-		print(a, b, c)
+		# print(a, b, c)
 		return a, b, c
 
