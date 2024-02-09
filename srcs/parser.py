@@ -1,91 +1,145 @@
-import re
-
-
 class ParserError(Exception):
-    pass
+	pass
 
 class Parser():
 
 	@staticmethod
+	def check_equal(av):
+		equalfound = False
+		for i in range(len(av)):
+			if av[i] == '=':
+				if equalfound:
+					raise ParserError("Found more than one equal sign.")
+				equalfound = True
+		if not equalfound:
+			raise ParserError("No equal sign found.")
+
+	@staticmethod
 	def parse(av):
-		equalFound = 1
-		a = 0
-		b = 0
-		c = 0
-		number = 0
-		haveNumber = False
-		sign = '+'
-		for term in av:
-			if term == ' ':
-				continue
-			if not re.match(r"^[Xx0-9*-^+=]", term):
-				# print(term)
-				raise ParserError("Invalid character in expression or invalid format")
-
-		av_list = list(av) 
-
+		Parser.check_equal(av)
 		i = 0
+		number = 0
 		sign = 1
-		while i < len(av_list):
-			term = av_list[i]
-			# print('term', term)
-			if term.isspace():
-				i += 1
-				continue
-			if term == '=':
-				equalFound = -1
-				number = 0
-				sign = 1
-				i += 1
-				continue
-			if term.isdigit() or (term == '.' and i+1 < len(av_list) and av_list[i+1].isdigit()):
-				number_str = term
-				while i+1 < len(av_list) and (av_list[i+1].isdigit() or av_list[i+1] == '.'):
-					i += 1
-					number_str += av_list[i]
-				number = float(number_str)
-				haveNumber = True
-			else:
-				if number != 0 or term == '*' or haveNumber == True:
-					if term == '*':
-						if i+4 < len(av_list) and (av_list[i+2] == 'X' or av_list[i+2] == 'x') and av_list[i+3] == '^' and av_list[i+4].isdigit():
-							i += 1
-							continue
-						else:
-							raise ParserError("Invalid format after *")
-					if term == 'X' or term == 'x':
-						if i+1 < len(av_list) and av_list[i+1] == '^':
-							if i+2 < len(av_list) and av_list[i+2].isdigit():
-								if av_list[i+2] == '2':
-									a += sign * number * equalFound
-								elif av_list[i+2] == '1':
-									b += sign * number * equalFound
-								elif av_list[i+2] == '0':
-									c += sign * number * equalFound
-									# print(c, sign, number, equalFound)
-								else:
-									raise ParserError("Grade is greater than 2")
-								number = 0
-								i += 3
-								haveNumber = False
-								continue
-							else:
-								raise ParserError("Invalid format after X")
-
-				# print('term2', term)
-				if re.match(r"^[+-]$", term):
-					if term == '-':
-						sign = -1
-					elif term == '+':
-						sign = 1
-					# print('term3', term, sign)
-				else:
-					raise ParserError("Invalid format")
-				# else:
-				# 	haveNumber = False
-				if term == '^':
-					raise ParserError("Missing an X before the ^")
+		equal = 1
+		grades = {'1': 0, '2': 0, '0': 0}
+		if av[0] == '-':
+			sign = -1
 			i += 1
-		# print(a, b, c)
-		return a, b, c
+		while i < len(av) and av[i] == ' ':
+			i += 1
+		if i == len(av):
+			raise ParserError("No number found.")
+		while i < len(av):
+			print('i:',i, av[i], 'len', len(av))
+			while i < len(av) and av[i] == ' ':
+				i += 1
+			# parse after equal
+			if av[i] == '=':
+				equal = -1
+				i += 1
+				while i < len(av) and av[i] == ' ':
+					i += 1
+				if i == len(av):
+					raise ParserError("No number found after equal sign.")
+				if av[i] == '-':
+					sign = -1
+					i += 1
+				if av[i] == '+':
+					i += 1
+				while i < len(av) and av[i] == ' ':
+					i += 1
+				if i == len(av):
+					raise ParserError("No number found after equal sign.")
+			#get number
+			if av[i].isdigit():
+				print('entro')	
+				dot = False
+				grade = 0
+				# get the number
+				while i < len(av) - 1 and av[i].isdigit() or av[i] == '.':
+					if av[i] == '.':
+						if dot:
+							raise ParserError("Found more than one dot in a single number.")
+						dot = True
+						
+					else:
+						if dot:
+							number += float(av[i]) / 10
+						else:
+							number = number * 10 + float(av[i])
+					i += 1
+				if i == len(av) - 1 and av[i].isdigit():
+					number = number * 10 + float(av[i])
+					# print(i, len(av), av[i])
+				# remove spaces after it
+				while i < len(av) and av[i] == ' ':
+					i += 1
+				# check if there is a grade
+				if i < len(av) and av[i] == 'x':
+					grade = 1
+					i += 1
+					print('xgrade', av[i])
+					print('entrooooo')
+					if i < len(av) and av[i] != ' ' and av[i] != '+' and av[i] != '-' and av[i] != '=':
+						if i < len(av) and av[i] == '^':
+							i += 1
+							if i < len(av) and av[i].isdigit():
+								while i < len(av) and av[i].isdigit():
+									grade = grade * 10 + int(av[i])
+									i += 1
+							else:
+								raise ParserError("Invalid grade.")
+						else:
+							raise ParserError("Invalid grade format.")
+				print('number: ', number, grade, sign, equal)
+				grades[str(grade)] = grades.get(str(grade), 0) + number * sign * equal
+				sign = 1
+				number = 0
+			# check if there is a sign
+			if av[i] == '+' or av[i] == '-':
+				if av[i] == '-':
+					sign = -1
+				else:
+					sign = 1
+				i += 1
+			if i == len(av) - 1:
+				break
+		
+		# Sort the dictionary by key
+		sorted_grades = {k: v for k, v in sorted(grades.items(), key=lambda item: int(item[0])) if v != 0}
+		# Format the dictionary to the desired string
+		formatted_grades = " + ".join([f"{v}x^{k}" if int(k) != 0 else str(v) for k, v in sorted_grades.items()])
 
+		# Initialize highest_key to None
+		highest_key = None
+
+		# Iterate over the items in the dictionary
+		for key, value in grades.items():
+			# Check if the value is greater than 0
+			if value > 0:
+				# If highest_key is None or the current key is greater than highest_key
+				if highest_key is None or int(key) > int(highest_key):
+					# Update highest_key
+					highest_key = key
+
+		# Print the highest key with a relevant value
+		if highest_key is not None:
+			print(f"The highest key with a relevant value is: {highest_key}")
+		else:
+			print("No key with a relevant value found.")
+
+
+		print(formatted_grades)
+		print(grades)
+
+
+if __name__ == "__main__":
+	try:
+		Parser.parse("1.0 +   2.0x  - 09.0x^2  = -3")
+	except Exception as e:
+		print(e)
+		
+		
+		
+		
+	
