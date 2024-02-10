@@ -76,7 +76,6 @@ class Parser():
 					i += 1
 				# check if there is a grade
 				if i < len(av) and av[i] == 'x':
-					grade = 1
 					i += 1
 					print('xgrade', av[i])
 					print('entrooooo')
@@ -91,9 +90,12 @@ class Parser():
 								raise ParserError("Invalid grade.")
 						else:
 							raise ParserError("Invalid grade format.")
+					if grade == 0:
+						grade = 1
 				print('number: ', number, grade, sign, equal)
 				grades[str(grade)] = grades.get(str(grade), 0) + number * sign * equal
 				sign = 1
+				grade = 0
 				number = 0
 			# check if there is a sign
 			if av[i] == '+' or av[i] == '-':
@@ -135,7 +137,7 @@ class Parser():
 
 if __name__ == "__main__":
 	try:
-		Parser.parse("1.0 +   2.0x  - 09.0x^2  = -3")
+		Parser.parse("1.0 * x^0 +   2.0x  - 09.0x^2  = -3")
 	except Exception as e:
 		print(e)
 		
