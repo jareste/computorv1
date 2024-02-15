@@ -75,7 +75,7 @@ class Parser():
 				while i < len(av) and av[i] == ' ':
 					i += 1
 				# check if there is a grade
-				if i < len(av) and av[i] == 'x':
+				if i < len(av) and (av[i] == 'x' or av[i] == 'X'):
 					i += 1
 					print('xgrade', av[i])
 					print('entrooooo')
@@ -97,6 +97,34 @@ class Parser():
 				sign = 1
 				grade = 0
 				number = 0
+			
+			if i < len(av) and (av[i] == 'x' or av[i] == 'X'):
+				i += 1
+				grade = 0
+
+				print('xgrade', av[i])
+				print('entrooooo')
+				if i < len(av) and av[i] != ' ' and av[i] != '+' and av[i] != '-' and av[i] != '=':
+					if i < len(av) and av[i] == '^':
+						i += 1
+						if i < len(av) and av[i].isdigit():
+							while i < len(av) and av[i].isdigit():
+								grade = grade * 10 + int(av[i])
+								i += 1
+						else:
+							raise ParserError("Invalid grade.")
+					else:
+						raise ParserError("Invalid grade format.")
+				if grade == 0:
+					grade = 1
+				number = 1
+				print('number: ', number, grade, sign, equal)
+				grades[str(grade)] = grades.get(str(grade), 0) + number * sign * equal
+				sign = 1
+				grade = 0
+				number = 0
+
+
 			# check if there is a sign
 			if av[i] == '+' or av[i] == '-':
 				if av[i] == '-':
@@ -118,7 +146,7 @@ class Parser():
 		# Iterate over the items in the dictionary
 		for key, value in grades.items():
 			# Check if the value is greater than 0
-			if value > 0:
+			if value != 0:
 				# If highest_key is None or the current key is greater than highest_key
 				if highest_key is None or int(key) > int(highest_key):
 					# Update highest_key
@@ -130,9 +158,10 @@ class Parser():
 		else:
 			print("No key with a relevant value found.")
 
-
+		
 		print(formatted_grades)
 		print(grades)
+		return grades['2'], grades['1'], grades['0']
 
 
 if __name__ == "__main__":

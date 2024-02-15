@@ -15,4 +15,5 @@ if __name__ == '__main__':
 	except Exception as e:
 		print(e)
 		exit(1)
+	print('a: ', a, 'b: ', b, 'c: ', c)
 	solve_equation(a, b, c)
