@@ -11,9 +11,8 @@ if __name__ == '__main__':
 		print('\"x^2 -X = 6\"')
 		exit(1)
 	try:
-		a,b,c = Parser.parse(sys.argv[1])
+		a,b,c,highest_key = Parser.parse(sys.argv[1])
 	except Exception as e:
 		print(e)
 		exit(1)
-	print('a: ', a, 'b: ', b, 'c: ', c)
 	solve_equation(a, b, c)

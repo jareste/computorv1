@@ -22,6 +22,8 @@ class Parser():
 		sign = 1
 		equal = 1
 		grades = {'1': 0, '2': 0, '0': 0}
+		term = None
+		prev_term = None
 		if av[0] == '-':
 			sign = -1
 			i += 1
@@ -30,7 +32,7 @@ class Parser():
 		if i == len(av):
 			raise ParserError("No number found.")
 		while i < len(av):
-			print('i:',i, av[i], 'len', len(av))
+			# print('i:',i, av[i], 'len', len(av))
 			while i < len(av) and av[i] == ' ':
 				i += 1
 			# parse after equal
@@ -52,7 +54,7 @@ class Parser():
 					raise ParserError("No number found after equal sign.")
 			#get number
 			if av[i].isdigit():
-				print('entro')	
+				# print('entro')	
 				dot = False
 				grade = 0
 				# get the number
@@ -74,14 +76,22 @@ class Parser():
 				# remove spaces after it
 				while i < len(av) and av[i] == ' ':
 					i += 1
+				if i < len(av) and av[i] == '*':
+					i += 1
+				while i < len(av) and av[i] == ' ':
+					i += 1
 				# check if there is a grade
 				if i < len(av) and (av[i] == 'x' or av[i] == 'X'):
 					i += 1
-					print('xgrade', av[i])
-					print('entrooooo')
-					if i < len(av) and av[i] != ' ' and av[i] != '+' and av[i] != '-' and av[i] != '=':
+					# print('xgrade', av[i])
+					# print('entrooooo')
+					while i < len(av) and av[i] == ' ':
+						i += 1
+					if i < len(av) and av[i] != '+' and av[i] != '-' and av[i] != '=':
 						if i < len(av) and av[i] == '^':
 							i += 1
+							while i < len(av) and av[i] == ' ':
+								i += 1
 							if i < len(av) and av[i].isdigit():
 								while i < len(av) and av[i].isdigit():
 									grade = grade * 10 + int(av[i])
@@ -92,7 +102,7 @@ class Parser():
 							raise ParserError("Invalid grade format.")
 					if grade == 0:
 						grade = 1
-				print('number: ', number, grade, sign, equal)
+				# print('number: ', number, grade, sign, equal)
 				grades[str(grade)] = grades.get(str(grade), 0) + number * sign * equal
 				sign = 1
 				grade = 0
@@ -102,8 +112,8 @@ class Parser():
 				i += 1
 				grade = 0
 
-				print('xgrade', av[i])
-				print('entrooooo')
+				# print('xgrade', av[i])
+				# print('entrooooo')
 				if i < len(av) and av[i] != ' ' and av[i] != '+' and av[i] != '-' and av[i] != '=':
 					if i < len(av) and av[i] == '^':
 						i += 1
@@ -118,50 +128,67 @@ class Parser():
 				if grade == 0:
 					grade = 1
 				number = 1
-				print('number: ', number, grade, sign, equal)
+				# print('number: ', number, grade, sign, equal)
 				grades[str(grade)] = grades.get(str(grade), 0) + number * sign * equal
 				sign = 1
 				grade = 0
 				number = 0
 
 
-			# check if there is a sign
-			if av[i] == '+' or av[i] == '-':
+
+			if i < len(av) and (av[i] == '+' or av[i] == '-'):
 				if av[i] == '-':
 					sign = -1
 				else:
 					sign = 1
 				i += 1
-			if i == len(av) - 1:
+				if i == len(av):
+					raise ParserError("No number found after sign.")
+				continue
+			if i >= len(av) - 1:
+				# print('last ---------------------------', av[i])
+				if not av[- 1].isdigit() and av[-1] != 'x' and av[-1] != 'X' and av[-1] != ' ':
+					raise ParserError(f"Invalid last character {av[-1]}.")
 				break
+			term = av[i]
+			if term == prev_term :
+				raise ParserError(f"Invalid character {av[i]}.")
+			prev_term = term
 		
-		# Sort the dictionary by key
-		sorted_grades = {k: v for k, v in sorted(grades.items(), key=lambda item: int(item[0])) if v != 0}
-		# Format the dictionary to the desired string
-		formatted_grades = " + ".join([f"{v}x^{k}" if int(k) != 0 else str(v) for k, v in sorted_grades.items()])
 
-		# Initialize highest_key to None
+
+		
+		sorted_grades = {k: v for k, v in sorted(grades.items(), key=lambda item: int(item[0])) if v != 0}
+		
+		formatted_grades = " + ".join([f"{v} * X ^ {k}" if int(k) != 0 else str(v) for k, v in sorted_grades.items()])
+
+		
 		highest_key = None
 
-		# Iterate over the items in the dictionary
+		formatted_grades = formatted_grades.replace(" + -", " - ")
 		for key, value in grades.items():
-			# Check if the value is greater than 0
 			if value != 0:
-				# If highest_key is None or the current key is greater than highest_key
 				if highest_key is None or int(key) > int(highest_key):
-					# Update highest_key
 					highest_key = key
 
-		# Print the highest key with a relevant value
-		if highest_key is not None:
-			print(f"The highest key with a relevant value is: {highest_key}")
-		else:
-			print("No key with a relevant value found.")
 
-		
-		print(formatted_grades)
-		print(grades)
-		return grades['2'], grades['1'], grades['0']
+		# if highest_key is not None:
+		# 	print(f"The highest key with a relevant value is: {highest_key}")
+		# else:
+		# 	print("No key with a relevant value found.")
+
+		if formatted_grades != "":
+			print("Reduced form:", formatted_grades, "= 0")
+		else:
+			print("0 = 0")
+		# print(grades)
+		if highest_key is not None and int(highest_key) > 2:
+			print(f"Polinomial degree: {highest_key}")
+			print("The polynomial degree is stricly greater than 2, I can't solve.")
+			exit(0)
+		else:
+			print(f"Polinomial degree: {highest_key}")
+		return grades['2'], grades['1'], grades['0'], highest_key
 
 
 if __name__ == "__main__":
