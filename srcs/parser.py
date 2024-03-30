@@ -57,6 +57,7 @@ class Parser():
 				# print('entro')	
 				dot = False
 				grade = 0
+				oGrade = True
 				# get the number
 				while i < len(av) - 1 and av[i].isdigit() or av[i] == '.':
 					if av[i] == '.':
@@ -94,13 +95,14 @@ class Parser():
 								i += 1
 							if i < len(av) and av[i].isdigit():
 								while i < len(av) and av[i].isdigit():
+									oGrade = False
 									grade = grade * 10 + int(av[i])
 									i += 1
 							else:
 								raise ParserError("Invalid grade.")
 						else:
 							raise ParserError("Invalid grade format.")
-					if grade == 0:
+					if grade == 0 and oGrade:
 						grade = 1
 				# print('number: ', number, grade, sign, equal)
 				grades[str(grade)] = grades.get(str(grade), 0) + number * sign * equal
@@ -144,15 +146,16 @@ class Parser():
 				i += 1
 				if i == len(av):
 					raise ParserError("No number found after sign.")
+				term = ''
 				continue
 			if i >= len(av) - 1:
 				# print('last ---------------------------', av[i])
 				if not av[- 1].isdigit() and av[-1] != 'x' and av[-1] != 'X' and av[-1] != ' ':
 					raise ParserError(f"Invalid last character {av[-1]}.")
 				break
-			term = av[i]
-			if term == prev_term :
-				raise ParserError(f"Invalid character {av[i]}.")
+			term = av[i] + str(i)
+			if term == prev_term:
+				raise ParserError(f"Invalid character {av[i]}. {i}")
 			prev_term = term
 		
 
